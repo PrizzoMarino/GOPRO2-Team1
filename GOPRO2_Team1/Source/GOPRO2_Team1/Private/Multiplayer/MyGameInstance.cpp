@@ -12,6 +12,25 @@ UMyGameInstance::UMyGameInstance()
 
 void UMyGameInstance::Init()
 {
-	Super::Init();
-	// Custom initialization code can be added here
+	
+	if(IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get())
+	{
+		SessionInterface = OnlineSub->GetSessionInterface();
+		if (SessionInterface.IsValid())
+		{
+			// Bind session delegates here if needed
+			//Sessioninterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMyGameInstance::)
+		}
+	}
+	
+}
+
+
+void UMyGameInstance::CreateSession()
+{
+}
+
+
+void UMyGameInstance::JoinSession()
+{
 }

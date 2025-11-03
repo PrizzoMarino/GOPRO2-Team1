@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
+#include "Interfaces/OnlineSessionInterface.h"
 
 /**
  * 
@@ -18,6 +19,15 @@ public:
 	UMyGameInstance();
 		
 protected:
+	IOnlineSessionPtr SessionInterface;
+	
 	virtual void Init() override;
+
+	UFUNCTION(BlueprintCallable)
+		void CreateSession();
+
+	UFUNCTION(BlueprintCallable)
+		void JoinSession();
+	
 	
 };
