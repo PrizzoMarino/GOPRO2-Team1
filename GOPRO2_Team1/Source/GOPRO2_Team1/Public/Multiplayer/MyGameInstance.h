@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "MyGameInstance.generated.h"
 #include "Interfaces/OnlineSessionInterface.h"
+#include "MyGameInstance.generated.h"
 
 /**
  * 
@@ -16,18 +16,26 @@ class GOPRO2_TEAM1_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	
 	UMyGameInstance();
-		
+
 protected:
+	
 	IOnlineSessionPtr SessionInterface;
+
+	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 	
 	virtual void Init() override;
 
-	UFUNCTION(BlueprintCallable)
-		void CreateSession();
-
-	UFUNCTION(BlueprintCallable)
-		void JoinSession();
+	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
+	virtual void OnFindSessionsComplete(bool Succeeded);
+	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	
+	
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void CreateSession();
+	
+	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
+	void JoinSession();
 	
 };
