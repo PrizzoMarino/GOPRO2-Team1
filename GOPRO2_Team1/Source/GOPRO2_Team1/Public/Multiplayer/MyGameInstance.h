@@ -21,6 +21,10 @@ public:
 		int32 CurrentPlayers;
 	UPROPERTY(BlueprintReadOnly)
 		int32 MaxPlayers;
+	UPROPERTY(BlueprintReadOnly)
+		int32 ServerArrayIndex;
+
+
 
 	void SetPlayerCount() 
 	{
@@ -29,6 +33,7 @@ public:
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerDel, FServerInfo, ServerListDel);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerSearchDel, bool, SearchingForServer);
 
 UCLASS()
 class GOPRO2_TEAM1_API UMyGameInstance : public UGameInstance
@@ -41,8 +46,13 @@ public:
 
 protected:
 
+	FName MySessionName;
+
 	UPROPERTY(BlueprintAssignable)
-	FServerDel ServerListDel;
+		FServerSearchDel SearchingForServer;
+	
+	UPROPERTY(BlueprintAssignable)
+		FServerDel ServerListDel;
 	
 	IOnlineSessionPtr SessionInterface;
 
@@ -50,7 +60,7 @@ protected:
 	
 	virtual void Init() override;
 
-	virtual void OnCreateSessionComplete(FName ServerName, bool Succeeded);
+	virtual void OnCreateSessionComplete(FName SessionName, bool Succeeded);
 	virtual void OnFindSessionsComplete(bool Succeeded);
 	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	
@@ -60,5 +70,8 @@ protected:
 	
 	UFUNCTION(BlueprintCallable)
 	void FindServers();
+
+	UFUNCTION(BlueprintCallable)
+	void JoinServer(int32 ArrayIndex);
 	
 };
