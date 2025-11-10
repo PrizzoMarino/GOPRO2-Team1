@@ -155,7 +155,7 @@ void UMyGameInstance::FindServers()
 	else
 		SessionSearch->bIsLanQuery = true; //IS LAN
 
-	SessionSearch->MaxSearchResults = 100;
+	SessionSearch->MaxSearchResults = 500;
 	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
@@ -176,3 +176,49 @@ void UMyGameInstance::JoinServer(int32 ArrayIndex)
 	}
 }
 
+void UMyGameInstance::DestroyMySession()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DestroyMySession called"));
+
+	if (!SessionInterface.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DestroyMySession: SessionInterface invalid"));
+		return;
+	}
+
+	DestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &UMyGameInstance::OnDestroySessionComplete);
+	DestroySessionCompleteDelegateHandle = SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegate);
+
+	bool bStarted = SessionInterface->DestroySession(MySessionName);
+	UE_LOG(LogTemp, Warning, TEXT("DestroySession started: %d"), bStarted ? 1 : 0);
+}
+
+void UMyGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete: %s Success: %d"), *SessionName.ToString(), bWasSuccessful ? 1 : 0);
+
+	if (!SessionInterface.IsValid())
+		return;
+
+	
+	if (DestroySessionCompleteDelegateHandle.IsValid())
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		DestroySessionCompleteDelegateHandle.Reset();
+	}
+
+	if (bWasSuccessful)
+	{
+		
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			
+			World->ServerTravel(TEXT("/Game/Game/Menu?listen"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete reported failure for %s"), *SessionName.ToString());
+	}
+}

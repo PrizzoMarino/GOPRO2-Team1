@@ -60,9 +60,15 @@ protected:
 	
 	virtual void Init() override;
 
+	FDelegateHandle DestroySessionCompleteDelegateHandle;
+
+	FOnDestroySessionCompleteDelegate DestroySessionCompleteDelegate;
+
 	virtual void OnCreateSessionComplete(FName SessionName, bool Succeeded);
 	virtual void OnFindSessionsComplete(bool Succeeded);
 	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
+	
 	
 	
 	UFUNCTION(BlueprintCallable)
@@ -73,5 +79,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void JoinServer(int32 ArrayIndex);
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	void DestroyMySession();
 };
