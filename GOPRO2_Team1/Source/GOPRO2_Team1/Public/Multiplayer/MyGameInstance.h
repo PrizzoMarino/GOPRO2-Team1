@@ -14,19 +14,19 @@ struct FServerInfo
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadOnly)
-		FString ServerName;
+	FString ServerName;
 	UPROPERTY(BlueprintReadOnly)
-		FString PlayerCountStr;
+	FString PlayerCountStr;
 	UPROPERTY(BlueprintReadOnly)
-		int32 CurrentPlayers;
+	int32 CurrentPlayers;
 	UPROPERTY(BlueprintReadOnly)
-		int32 MaxPlayers;
+	int32 MaxPlayers;
 	UPROPERTY(BlueprintReadOnly)
-		int32 ServerArrayIndex;
+	int32 ServerArrayIndex;
 
 
 
-	void SetPlayerCount() 
+	void SetPlayerCount()
 	{
 		PlayerCountStr = FString::FromInt(CurrentPlayers) + "/" + FString::FromInt(MaxPlayers);
 	}
@@ -41,7 +41,7 @@ class GOPRO2_TEAM1_API UMyGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	
+
 	UMyGameInstance();
 
 protected:
@@ -49,15 +49,15 @@ protected:
 	FName MySessionName;
 
 	UPROPERTY(BlueprintAssignable)
-		FServerSearchDel SearchingForServer;
-	
+	FServerSearchDel SearchingForServer;
+
 	UPROPERTY(BlueprintAssignable)
-		FServerDel ServerListDel;
-	
+	FServerDel ServerListDel;
+
 	IOnlineSessionPtr SessionInterface;
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
-	
+
 	virtual void Init() override;
 
 	FDelegateHandle DestroySessionCompleteDelegateHandle;
@@ -68,12 +68,12 @@ protected:
 	virtual void OnFindSessionsComplete(bool Succeeded);
 	virtual void OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
 	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
-	
-	
-	
+
+
+
 	UFUNCTION(BlueprintCallable)
 	void CreateSession(FString ServerName, FString HostName);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void FindServers();
 
