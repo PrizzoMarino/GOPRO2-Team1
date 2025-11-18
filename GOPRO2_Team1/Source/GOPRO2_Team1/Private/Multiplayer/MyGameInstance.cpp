@@ -146,7 +146,7 @@ void UMyGameInstance::FindServers()
 {
 	SearchingForServer.Broadcast(true);
 
-	UE_LOG(LogTemp, Warning, TEXT("JoinedServer"));
+	UE_LOG(LogTemp, Warning, TEXT("ServersFound"));
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	
