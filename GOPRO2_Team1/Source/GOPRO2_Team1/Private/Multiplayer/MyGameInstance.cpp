@@ -107,13 +107,15 @@ void UMyGameInstance::OnFindSessionsComplete(bool Succeeded)
 
 void UMyGameInstance::OnJoinSessionComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
-	if (APlayerController* PController = GetFirstLocalPlayerController())
+	if (APlayerController* PController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
 	{
 		FString JoinAddress = "";
 		PController->HasAuthority();
 		SessionInterface->GetResolvedConnectString(SessionName, JoinAddress);
-		if (JoinAddress != "" && !ensure(PController != nullptr)) { return; }
-		PController->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
+		if (JoinAddress != "")
+		{
+			PController->ClientTravel(JoinAddress, ETravelType::TRAVEL_Absolute);
+		}
 	}
 }
 
