@@ -53,19 +53,19 @@ void UMyGameInstance::Init()
 		SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMyGameInstance::OnFindSessionsComplete);
 		SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UMyGameInstance::OnJoinSessionComplete);
 	}
-	
+
 }
 
 
-void UMyGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeeded) 
+void UMyGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeeded)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnCreateSessionComplete, Succeeded: %d"), Succeeded);
-	if(Succeeded)
+	if (Succeeded)
 	{
 		UWorld* World = GetWorld();
-		if(World)
+		if (World)
 		{
-			World->ServerTravel("/Game/Game/Maps/Map1?Listen");
+			World->ServerTravel("/Game/Game/Maps/Test?Listen");
 		}
 	}
 }
@@ -78,7 +78,7 @@ void UMyGameInstance::OnFindSessionsComplete(bool Succeeded)
 	if (Succeeded)
 	{
 		int32 ArrayIndex = -1;
-		for (FOnlineSessionSearchResult Result : SessionSearch->SearchResults) 
+		for (FOnlineSessionSearchResult Result : SessionSearch->SearchResults)
 		{
 			++ArrayIndex;
 			if (!Result.IsValid())
@@ -96,7 +96,7 @@ void UMyGameInstance::OnFindSessionsComplete(bool Succeeded)
 			Info.CurrentPlayers = Info.MaxPlayers - Result.Session.NumOpenPublicConnections;
 			Info.ServerArrayIndex = ArrayIndex;
 			Info.SetPlayerCount();
-			
+
 
 			ServerListDel.Broadcast(Info);
 		}
@@ -125,7 +125,7 @@ void UMyGameInstance::CreateSession(FString ServerName, FString HostName)
 	FOnlineSessionSettings SessionSettings;
 	SessionSettings.bAllowJoinInProgress = true;
 	SessionSettings.bIsDedicated = false;
-	
+
 	if (IOnlineSubsystem::Get()->GetSubsystemName() != "NULL")
 		SessionSettings.bIsLANMatch = false;
 	else
@@ -149,13 +149,13 @@ void UMyGameInstance::FindServers()
 	UE_LOG(LogTemp, Warning, TEXT("JoinedServer"));
 
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	
+
 	if (IOnlineSubsystem::Get()->GetSubsystemName() != "NULL")
 		SessionSearch->bIsLanQuery = false; //IS NOT LAN
 	else
 		SessionSearch->bIsLanQuery = true; //IS LAN
 
-	SessionSearch->MaxSearchResults = 100;
+	SessionSearch->MaxSearchResults = 500;
 	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
@@ -176,3 +176,49 @@ void UMyGameInstance::JoinServer(int32 ArrayIndex)
 	}
 }
 
+void UMyGameInstance::DestroyMySession()
+{
+	UE_LOG(LogTemp, Warning, TEXT("DestroyMySession called"));
+
+	if (!SessionInterface.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DestroyMySession: SessionInterface invalid"));
+		return;
+	}
+
+	DestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &UMyGameInstance::OnDestroySessionComplete);
+	DestroySessionCompleteDelegateHandle = SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegate);
+
+	bool bStarted = SessionInterface->DestroySession(MySessionName);
+	UE_LOG(LogTemp, Warning, TEXT("DestroySession started: %d"), bStarted ? 1 : 0);
+}
+
+void UMyGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete: %s Success: %d"), *SessionName.ToString(), bWasSuccessful ? 1 : 0);
+
+	if (!SessionInterface.IsValid())
+		return;
+
+
+	if (DestroySessionCompleteDelegateHandle.IsValid())
+	{
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+		DestroySessionCompleteDelegateHandle.Reset();
+	}
+
+	if (bWasSuccessful)
+	{
+
+		UWorld* World = GetWorld();
+		if (World)
+		{
+
+			World->ServerTravel(TEXT("/Game/Game/Menu?listen"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete reported failure for %s"), *SessionName.ToString());
+	}
+}
