@@ -44,6 +44,9 @@ void AMovingPlatform::BeginPlay()
 
 		ReplicatedLocation = InitialLocation;
 
+		SetReplicates(true);
+		SetReplicateMovement(true);
+
 		if (PathPoints.Num() <= 1) 
 		{
 			PrimaryActorTick.bCanEverTick = false;
