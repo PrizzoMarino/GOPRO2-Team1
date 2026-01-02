@@ -70,7 +70,7 @@ protected:
 	virtual void OnDestroySessionComplete(FName SessionName, bool bWasSuccessful);
 
 
-
+public:
 	UFUNCTION(BlueprintCallable)
 	void CreateSession(FString ServerName, FString HostName);
 
