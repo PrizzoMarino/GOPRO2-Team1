@@ -4,6 +4,11 @@
 #include "MyGameStateBase.h"
 #include "Net/UnrealNetwork.h"
 
+AMyGameStateBase::AMyGameStateBase()
+{
+	bReplicates = true; 
+}
+
 void AMyGameStateBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -17,7 +22,7 @@ void AMyGameStateBase::CheckAllReady()
 {
 	if (HasAuthority() && bPlayer1Ready && bPlayer2Ready)
 	{
-		GetWorld()->ServerTravel(TEXT("Game/Game/Maps/CharacterSelection?Listen"));
+		GetWorld()->ServerTravel(TEXT("/Game/Game/Maps/CharacterSelection?Listen"));
 	}
 }
 

@@ -17,6 +17,8 @@ class GOPRO2_TEAM1_API AMyGameStateBase : public AGameStateBase
 
 public:
 
+    AMyGameStateBase();
+
     UPROPERTY(Replicated, BlueprintReadOnly, Category = "Multiplayer")
     bool bPlayer1Ready = false;
 

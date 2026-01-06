@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+class UUserWidget;
 /**
  * 
  */
@@ -17,9 +18,16 @@ class GOPRO2_TEAM1_API AMyPlayerController : public APlayerController
 public:
 
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Multiplayer")
-	void Server_ToggleReady(bool bClientready);
+	void Server_ToggleReady();
 
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void HandleReturnToMainMenu();
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ClosePauseMenu();
+
+protected:
+	UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UUserWidget* PauseMenuWidget;
 	
 };
