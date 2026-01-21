@@ -38,7 +38,7 @@ void AMyPlayerController::HandleReturnToMainMenu()
 	}
 }
 
-void AMyPlayerController::ClosePauseMenu()
+/*void AMyPlayerController::ClosePauseMenu()
 {
 	if (PauseMenuWidget)
 	{
@@ -50,5 +50,5 @@ void AMyPlayerController::ClosePauseMenu()
 		bShowMouseCursor = false;
 		// SetPause(false); 
 	}
-}
+}*/
 

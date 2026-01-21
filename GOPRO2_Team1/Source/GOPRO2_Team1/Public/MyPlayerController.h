@@ -27,7 +27,8 @@ public:
 	void ClosePauseMenu();
 
 protected:
-	UPROPERTY(BlueprintReadWrite, Category = "UI")
-	UUserWidget* PauseMenuWidget;
+	
+	/*UPROPERTY(BlueprintReadWrite, Category = "UI")
+	UUserWidget* PauseMenuWidget;*/
 	
 };
