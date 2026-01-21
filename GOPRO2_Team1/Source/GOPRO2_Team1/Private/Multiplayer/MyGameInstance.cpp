@@ -65,7 +65,7 @@ void UMyGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeeded)
 		UWorld* World = GetWorld();
 		if (World)
 		{
-			World->ServerTravel("/Game/Game/Maps/Map1?Listen");
+			World->ServerTravel("/Game/Game/Maps/CharacterSelection?Listen");
 		}
 	}
 }

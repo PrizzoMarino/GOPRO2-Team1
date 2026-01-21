@@ -23,8 +23,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Multiplayer")
 	void HandleReturnToMainMenu();
 
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void ClosePauseMenu();
+	/*UFUNCTION(BlueprintCallable, Category = "UI")
+	void ClosePauseMenu();*/
 
 protected:
 	
