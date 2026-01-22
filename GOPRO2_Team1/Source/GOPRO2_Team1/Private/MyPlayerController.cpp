@@ -29,12 +29,14 @@ void AMyPlayerController::Server_ToggleReady_Implementation()
 void AMyPlayerController::HandleReturnToMainMenu()
 {
 	UMyGameInstance* GI = Cast<UMyGameInstance>(GetGameInstance());
-	
+
 	if (GI)
 	{
 		GI->DestroyMySession();
-
-		ClientReturnToMainMenuWithTextReason(FText::FromString("You left the session."));
+	}
+	else
+	{
+		ClientReturnToMainMenuWithTextReason(FText::FromString("Returning to Main Menu"));
 	}
 }
 

@@ -85,8 +85,8 @@ void UMyGameInstance::OnFindSessionsComplete(bool Succeeded)
 				continue;
 
 			FServerInfo Info;
-			FString ServerName = "Empy Server Name";
-			FString HostName = "Empy Host Name";
+			FString ServerName = "Empty Server Name";
+			FString HostName = "Empty Host Name";
 
 			Result.Session.SessionSettings.Get(FName("SERVER_NAME_KEY"), ServerName);
 			Result.Session.SessionSettings.Get(FName("SERVER_HOSTNAME_KEY"), HostName);
@@ -189,19 +189,24 @@ void UMyGameInstance::DestroyMySession()
 	DestroySessionCompleteDelegate = FOnDestroySessionCompleteDelegate::CreateUObject(this, &UMyGameInstance::OnDestroySessionComplete);
 	DestroySessionCompleteDelegateHandle = SessionInterface->AddOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegate);
 
+	SessionInterface->EndSession(MySessionName);
+
 	bool bStarted = SessionInterface->DestroySession(MySessionName);
-	UE_LOG(LogTemp, Warning, TEXT("DestroySession started: %d"), bStarted ? 1 : 0);
+
+	if (bStarted) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DestroySession failed to start."));
+		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
+
+		UGameplayStatics::OpenLevel(GetWorld(), "Menu");
+	}
 }
 
 void UMyGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSuccessful)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete: %s Success: %d"), *SessionName.ToString(), bWasSuccessful ? 1 : 0);
 
-	if (!SessionInterface.IsValid())
-		return;
-
-
-	if (DestroySessionCompleteDelegateHandle.IsValid())
+	if (!SessionInterface.IsValid() && DestroySessionCompleteDelegateHandle.IsValid()) 
 	{
 		SessionInterface->ClearOnDestroySessionCompleteDelegate_Handle(DestroySessionCompleteDelegateHandle);
 		DestroySessionCompleteDelegateHandle.Reset();
@@ -214,11 +219,12 @@ void UMyGameInstance::OnDestroySessionComplete(FName SessionName, bool bWasSucce
 		if (World)
 		{
 
-			World->ServerTravel(TEXT("/Game/Game/Menu?listen"));
+			UGameplayStatics::OpenLevel(World, FName("Menu"));
 		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnDestroySessionComplete reported failure for %s"), *SessionName.ToString());
+		UGameplayStatics::OpenLevel(GetWorld(), FName("Menu"));
 	}
 }
